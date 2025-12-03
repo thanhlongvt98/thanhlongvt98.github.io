@@ -26,9 +26,9 @@ author:
   avatar           : "profile.png"
   name             : "LE Thanh Long"
   pronouns         : # example: "she/her"  
-  bio              : "A learner"
+  bio              : "PhD Student @ SUTD"
   location         : "Singapore"
-  employer         : "SUTD"
+  # employer         : "SUTD"
   uri              : https://www.sutd.edu.sg/
   uri_label        : "SUTD"
   email            : "long_le@mymail.sutd.edu.sg" 
