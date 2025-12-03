@@ -7,7 +7,64 @@ author_profile: true
 
 {% include base_path %}
 
-{% for post in site.certificates reversed %}
-  {% include archive-single.html %}
+<style>
+.certificate-tree {
+  margin-bottom: 2em;
+}
+
+.certificate-specialization {
+  margin-bottom: 1.5em;
+  padding-left: 0;
+}
+
+.certificate-course {
+  margin-bottom: 1em;
+  padding-left: 2em;
+  border-left: 2px solid var(--global-border-color);
+  margin-left: 1em;
+}
+
+.certificate-parent {
+  font-size: 1.2em;
+  color: var(--global-text-color);
+}
+
+.certificate-child {
+  font-size: 1em;
+  color: var(--global-text-color-light);
+}
+
+.certificate-child::before {
+  content: "└─ ";
+  margin-right: 0.5em;
+  color: var(--global-border-color);
+}
+
+.certificate-item {
+  margin-bottom: 0.5em;
+}
+</style>
+
+{% comment %} Group certificates by specialization {% endcomment %}
+{% assign specializations = site.certificates | where: "is_specialization", true | sort: "date" | reverse %}
+{% assign standalone_certs = site.certificates | where: "is_specialization", nil | where: "specialization", nil | sort: "date" | reverse %}
+
+{% comment %} Display specializations with their courses {% endcomment %}
+{% for spec in specializations %}
+  <div class="certificate-tree">
+    {% include archive-single-certificate.html post=spec %}
+    
+    {% comment %} Find and display courses belonging to this specialization {% endcomment %}
+    {% assign spec_courses = site.certificates | where: "specialization", spec.title | sort: "date" | reverse %}
+    {% for course in spec_courses %}
+      {% include archive-single-certificate.html post=course %}
+    {% endfor %}
+  </div>
 {% endfor %}
 
+{% comment %} Display standalone certificates (not part of any specialization) {% endcomment %}
+{% for cert in standalone_certs %}
+  <div class="certificate-tree">
+    {% include archive-single-certificate.html post=cert %}
+  </div>
+{% endfor %}
