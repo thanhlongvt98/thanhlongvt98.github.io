@@ -53,7 +53,7 @@ redirect_from:
 <div class="news-section">
 
 <div class="news-item">
-  <div class="news-date">January 2025</div>
+  <div class="news-date">December 2025</div>
   <div class="news-title">Welcome to My Homepage</div>
   <div class="news-content">
     <p>Welcome to my homepage! This site will be updated with news about my  activities.</p>

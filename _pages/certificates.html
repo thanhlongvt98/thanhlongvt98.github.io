@@ -45,9 +45,9 @@ author_profile: true
 }
 </style>
 
-{% comment %} Group certificates by specialization {% endcomment %}
+{% comment %} Get all certificates sorted by date {% endcomment %}
+{% assign all_certs = site.certificates | sort: "date" | reverse %}
 {% assign specializations = site.certificates | where: "is_specialization", true | sort: "date" | reverse %}
-{% assign standalone_certs = site.certificates | where: "is_specialization", nil | where: "specialization", nil | sort: "date" | reverse %}
 
 {% comment %} Display specializations with their courses {% endcomment %}
 {% for spec in specializations %}
@@ -62,9 +62,15 @@ author_profile: true
   </div>
 {% endfor %}
 
-{% comment %} Display standalone certificates (not part of any specialization) {% endcomment %}
-{% for cert in standalone_certs %}
-  <div class="certificate-tree">
-    {% include archive-single-certificate.html post=cert %}
-  </div>
+{% comment %} Display standalone certificates (not part of any specialization and not example files) {% endcomment %}
+{% for cert in all_certs %}
+  {% if cert.is_specialization == null or cert.is_specialization == false %}
+    {% if cert.specialization == null or cert.specialization == "" %}
+      {% unless cert.title contains "Example" %}
+        <div class="certificate-tree">
+          {% include archive-single-certificate.html post=cert %}
+        </div>
+      {% endunless %}
+    {% endif %}
+  {% endif %}
 {% endfor %}

@@ -64,17 +64,6 @@ redirect_from:
 }
 </style>
 
-## Education
-
-<div class="cv-item">
-  <div class="cv-item-title">Bachelor of Electrical & Electronics Engineering</div>
-  <div class="cv-item-meta">Ho Chi Minh City University of Technology | Oct 2016 - Oct 2020 | Ho Chi Minh city, Vietnam</div>
-  <ul class="cv-item-details">
-    <li>Honors Program</li>
-    <li>Thesis: Design and implementation of an FPGA-based crypto accelerator for IPsec VPN</li>
-  </ul>
-</div>
-
 ## Work Experience
 
 <div class="cv-item">
@@ -121,6 +110,17 @@ redirect_from:
   <div class="cv-item-meta">Jun. 2019 - Dec. 2020 | Vietnam</div>
   <ul class="cv-item-details">
     <li>Developed FPGA-based cryptographic accelerator for SOHO VPN router (Thesis project)</li>
+  </ul>
+</div>
+
+## Education
+
+<div class="cv-item">
+  <div class="cv-item-title">Bachelor of Electrical & Electronics Engineering</div>
+  <div class="cv-item-meta"><a href="https://hcmut.edu.vn/en" target="_blank">Ho Chi Minh City University of Technology</a> | Oct 2016 - Oct 2020 | Ho Chi Minh city, Vietnam</div>
+  <ul class="cv-item-details">
+    <li>Honors Program</li>
+    <li>Thesis: Design and implementation of an FPGA-based crypto accelerator for IPsec VPN</li>
   </ul>
 </div>
 
