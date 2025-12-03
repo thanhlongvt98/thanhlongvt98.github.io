@@ -202,7 +202,7 @@ redirect_from:
   </ul>
 </div>
 
-## Skills
+<!-- ## Skills
 
 <div class="cv-item">
   <ul class="cv-item-details" style="list-style-type: none; padding-left: 0;">
@@ -210,4 +210,4 @@ redirect_from:
     <li><strong>Environment:</strong> Linux, Robot Operating System</li>
     <li><strong>Programming Languages:</strong> C/C++, Python, Bash script</li>
   </ul>
-</div>
+</div> -->
