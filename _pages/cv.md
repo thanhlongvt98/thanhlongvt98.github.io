@@ -98,11 +98,8 @@ redirect_from:
 </div>
 
 <div class="cv-item">
-  <div class="cv-item-title">Software Developer</div>
+  <div class="cv-item-title">Intern</div>
   <div class="cv-item-meta">Viettel High Technology Industries Corporation | Nov. 2019 - Apr. 2020 | Vietnam</div>
-  <ul class="cv-item-details">
-    <li>Developed IPsec VPN service for SOHO router with Linux kernel integration</li>
-  </ul>
 </div>
 
 <div class="cv-item">
