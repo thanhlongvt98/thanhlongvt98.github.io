@@ -2,7 +2,7 @@
 permalink: /
 title: "Thanh Long's Homepage"
 author_profile: true
-date: 2025-01-15
+date: 2025-12-03
 redirect_from: 
   - /about/
   - /about.html
