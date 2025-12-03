@@ -245,6 +245,12 @@
 
   li {
     white-space: nowrap;
+    
+    &.author__desktop {
+      white-space: normal;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
   }
 
   a {
