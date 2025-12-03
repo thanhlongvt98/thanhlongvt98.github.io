@@ -3,6 +3,7 @@ layout: archive
 title: "Certificates"
 permalink: /certificates/
 author_profile: true
+date: 2025-01-15
 ---
 
 {% include base_path %}
@@ -47,30 +48,73 @@ author_profile: true
 
 {% comment %} Get all certificates sorted by date {% endcomment %}
 {% assign all_certs = site.certificates | sort: "date" | reverse %}
+
+{% comment %} First, get all specializations {% endcomment %}
 {% assign specializations = site.certificates | where: "is_specialization", true | sort: "date" | reverse %}
 
 {% comment %} Display specializations with their courses {% endcomment %}
 {% for spec in specializations %}
   <div class="certificate-tree">
-    {% include archive-single-certificate.html post=spec %}
+    <div class="certificate-specialization">
+      <h2 class="certificate-parent">
+        {% if spec.link %}
+          <a href="{{ spec.link }}" target="_blank">{{ spec.title }}</a>
+        {% else %}
+          {{ spec.title }}
+        {% endif %}
+      </h2>
+      {% if spec.excerpt %}
+        <p class="archive__item-excerpt" style="color: var(--global-text-color-light); font-size: 0.9em;">{{ spec.excerpt | markdownify }}</p>
+      {% endif %}
+    </div>
     
     {% comment %} Find and display courses belonging to this specialization {% endcomment %}
     {% assign spec_courses = site.certificates | where: "specialization", spec.title | sort: "date" | reverse %}
     {% for course in spec_courses %}
-      {% include archive-single-certificate.html post=course %}
+      <div class="certificate-course">
+        <h3 class="certificate-child">
+          {% if course.link %}
+            <a href="{{ course.link }}" target="_blank">{{ course.title }}</a>
+          {% else %}
+            {{ course.title }}
+          {% endif %}
+        </h3>
+        {% if course.excerpt %}
+          <p class="archive__item-excerpt" style="margin-top: 0.5em; color: var(--global-text-color-light); font-size: 0.9em;">
+            <i class="fa fa-fw fa-calendar" aria-hidden="true"></i> {{ course.excerpt | markdownify | remove: "<p>" | remove: "</p>" }}
+          </p>
+        {% endif %}
+      </div>
     {% endfor %}
   </div>
 {% endfor %}
 
-{% comment %} Display standalone certificates (not part of any specialization and not example files) {% endcomment %}
+{% comment %} Display standalone certificates (not specializations and not courses) {% endcomment %}
 {% for cert in all_certs %}
-  {% if cert.is_specialization == null or cert.is_specialization == false %}
-    {% if cert.specialization == null or cert.specialization == "" %}
-      {% unless cert.title contains "Example" %}
-        <div class="certificate-tree">
-          {% include archive-single-certificate.html post=cert %}
-        </div>
-      {% endunless %}
-    {% endif %}
+  {% assign is_spec = false %}
+  {% if cert.is_specialization == true %}
+    {% assign is_spec = true %}
   {% endif %}
+  
+  {% assign is_course = false %}
+  {% if cert.specialization and cert.specialization != "" %}
+    {% assign is_course = true %}
+  {% endif %}
+  
+  {% unless is_spec or is_course %}
+    {% unless cert.title contains "Example" %}
+      <div class="certificate-tree">
+        <h2>
+          {% if cert.link %}
+            <a href="{{ cert.link }}" target="_blank">{{ cert.title }}</a>
+          {% else %}
+            {{ cert.title }}
+          {% endif %}
+        </h2>
+        {% if cert.excerpt %}
+          <p class="archive__item-excerpt" style="color: var(--global-text-color-light); font-size: 0.9em;">{{ cert.excerpt | markdownify }}</p>
+        {% endif %}
+      </div>
+    {% endunless %}
+  {% endunless %}
 {% endfor %}

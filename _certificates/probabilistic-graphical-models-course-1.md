@@ -1,9 +1,9 @@
 ---
 title: "Probabilistic Graphical Models 1: Representation"
 collection: certificates
-date: 2024-02-10
-excerpt: "Issued by: Coursera / Stanford University<br/>Completed: February 2024<br/>Part of: Probabilistic Graphical Models Specialization"
-link: https://www.coursera.org/learn/probabilistic-graphical-models
+date: 2025-11-14
+excerpt: "November 2025"
+link: https://www.coursera.org/account/accomplishments/verify/2ORQAKHPTZMF
 specialization: "Probabilistic Graphical Models Specialization"
 permalink: /certificates/probabilistic-graphical-models-course-1
 ---

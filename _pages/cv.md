@@ -3,6 +3,7 @@ layout: archive
 title: "Curriculum Vitae"
 permalink: /cv/
 author_profile: true
+date: 2025-12-03
 redirect_from:
   - /resume
 ---
@@ -67,6 +68,12 @@ redirect_from:
 ## Work Experience
 
 <div class="cv-item">
+  <div class="cv-item-title">PhD Student</div>
+  <div class="cv-item-meta"><a href="https://www.sutd.edu.sg/" target="_blank">Singapore University of Technology and Design (SUTD)</a> | August 2025 - Present | Singapore</div>
+  <div class="cv-item-meta"><em>Supervised by <a href="https://www.sutd.edu.sg/profile/chen-binbin/" target="_blank">Prof. Binbin Chen</a> (<a href="https://scholar.google.com/citations?hl=en&user=42U2zXcAAAAJ&view_op=list_works&sortby=pubdate" target="_blank">Google Scholar</a>)</em></div>
+</div>
+
+<div class="cv-item">
   <div class="cv-item-title">Communications Testbed Engineer</div>
   <div class="cv-item-meta"><a href="https://fcp.sutd.edu.sg/" target="_blank">Future Comms R&D Programme</a> - <a href="https://fcp.sutd.edu.sg/fcclab/" target="_blank">FCCLab</a> - APOS | August 2022 - August 2025 | Singapore</div>
   <div class="cv-item-meta"><em>5G Networks and Open RAN System Research</em></div>
@@ -103,7 +110,7 @@ redirect_from:
 </div>
 
 <div class="cv-item">
-  <div class="cv-item-title">Software Developer (Thesis)</div>
+  <div class="cv-item-title">Undergraduate Research (Thesis Project)</div>
   <div class="cv-item-meta">Jun. 2019 - Dec. 2020 | Vietnam</div>
   <ul class="cv-item-details">
     <li>Developed FPGA-based cryptographic accelerator for SOHO VPN router (Thesis project)</li>

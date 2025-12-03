@@ -1,0 +1,15 @@
+---
+layout: archive
+title: "Certificates (Simple Test)"
+permalink: /certificates-simple/
+author_profile: true
+---
+
+{% include base_path %}
+
+<h2>All Certificates (Test Page)</h2>
+
+{% for post in site.certificates reversed %}
+  {% include archive-single.html %}
+{% endfor %}
+
