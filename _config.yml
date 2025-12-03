@@ -28,8 +28,9 @@ author:
   pronouns         : # example: "she/her"  
   bio              : "A learner"
   location         : "Singapore"
-  employer         : "Singapore University of Technology and Design"
+  employer         : "SUTD"
   uri              : https://www.sutd.edu.sg/
+  uri_label        : "SUTD"
   email            : "long_le@mymail.sutd.edu.sg" 
 
   # Academic websites
