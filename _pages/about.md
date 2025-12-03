@@ -61,6 +61,14 @@ redirect_from:
   </div>
 </div>
 
+<div class="news-item">
+  <div class="news-date">December 3, 2025</div>
+  <div class="news-title">New Blog Post: Interactive Tools for 5G LDPC and QAM LLR Analysis</div>
+  <div class="news-content">
+    <p>I've published a new blog post introducing two interactive visualization tools: a <a href="/files/20251203/qam_llr_visualizer.html">QAM LLR Visualizer</a> and a <a href="/files/20251203/base_graphs_visualizer.html">5G LDPC Base Graphs Visualizer</a>. Check out the <a href="/posts/20251203/">full post</a> for more details.</p>
+  </div>
+</div>
+
 <!-- Add more news items below following this format:
 <div class="news-item">
   <div class="news-date">Date (e.g., February 2025)</div>

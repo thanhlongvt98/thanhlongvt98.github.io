@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QAM LLR Visualizer</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-top: 0;
+        }
+        .controls {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        label {
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
+        }
+        select, input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .slider {
+            width: 200px;
+        }
+        .value-display {
+            min-width: 80px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .visualization-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .constellation-likelihood-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .llr-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 1200px) {
+            .constellation-likelihood-row {
+                grid-template-columns: 1fr;
+            }
+            .llr-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        .plot-container {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            padding: 15px;
+        }
+        .plot-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .plot-formula {
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            color: #666;
+            margin-bottom: 10px;
+            padding: 5px;
+            background: #f5f5f5;
+            border-radius: 3px;
+            text-align: center;
+        }
+        .constellation-plot {
+            position: relative;
+        }
+        .llr-plot {
+            position: relative;
+        }
+        .constellation-point {
+            fill: #2196F3;
+            stroke: #fff;
+            stroke-width: 1px;
+            cursor: pointer;
+        }
+        .constellation-point:hover {
+            fill: #1976D2;
+        }
+        .constellation-bit-label {
+            pointer-events: none;
+            user-select: none;
+        }
+        .received-symbol {
+            fill: #FF5722;
+            stroke: #fff;
+            stroke-width: 2px;
+            cursor: move;
+        }
+        .received-symbol-line {
+            stroke: #FF5722;
+            stroke-width: 1px;
+            stroke-dasharray: 3,3;
+            opacity: 0.5;
+        }
+        .axis {
+            stroke: #666;
+            stroke-width: 1px;
+        }
+        .axis-label {
+            font-size: 12px;
+            fill: #666;
+        }
+        .axis-tick {
+            stroke: #666;
+            stroke-width: 1px;
+        }
+        .axis-tick-label {
+            font-size: 10px;
+            fill: #666;
+        }
+        .grid-line {
+            stroke: #e0e0e0;
+            stroke-width: 0.5px;
+        }
+        .llr-line {
+            fill: none;
+            stroke-width: 2px;
+        }
+        .llr-line.bit-0 { stroke: #e74c3c; }
+        .llr-line.bit-1 { stroke: #3498db; }
+        .llr-line.bit-2 { stroke: #2ecc71; }
+        .llr-line.bit-3 { stroke: #f39c12; }
+        .llr-line.bit-4 { stroke: #9b59b6; }
+        .llr-line.bit-5 { stroke: #1abc9c; }
+        .llr-line.bit-6 { stroke: #e67e22; }
+        .llr-line.bit-7 { stroke: #34495e; }
+        .llr-bar {
+            stroke: #fff;
+            stroke-width: 1px;
+        }
+        .llr-bar.bit-0 { fill: #e74c3c; }
+        .llr-bar.bit-1 { fill: #3498db; }
+        .llr-bar.bit-2 { fill: #2ecc71; }
+        .llr-bar.bit-3 { fill: #f39c12; }
+        .llr-bar.bit-4 { fill: #9b59b6; }
+        .llr-bar.bit-5 { fill: #1abc9c; }
+        .llr-bar.bit-6 { fill: #e67e22; }
+        .llr-bar.bit-7 { fill: #34495e; }
+        .llr-bar-label {
+            font-size: 11px;
+            fill: #333;
+            text-anchor: middle;
+        }
+        .likelihood-bar {
+            stroke: #fff;
+            stroke-width: 1px;
+            fill: #4CAF50;
+        }
+        .likelihood-bar-label {
+            font-size: 9px;
+            fill: #333;
+            text-anchor: middle;
+        }
+        .likelihood-plot {
+            position: relative;
+        }
+        .legend {
+            margin-top: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 3px;
+        }
+        .info-panel {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e3f2fd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .info-row {
+            display: flex;
+            gap: 20px;
+            margin: 5px 0;
+        }
+        .info-label {
+            font-weight: 600;
+            min-width: 120px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>QAM LLR Visualizer</h1>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="qam-order">QAM Order (bits per symbol):</label>
+                <select id="qam-order">
+                    <option value="1">1 bit (BPSK/2-QAM)</option>
+                    <option value="2">2 bits (QPSK/4-QAM)</option>
+                    <option value="3">3 bits (8-QAM)</option>
+                    <option value="4" selected>4 bits (16-QAM)</option>
+                    <option value="5">5 bits (32-QAM)</option>
+                    <option value="6">6 bits (64-QAM)</option>
+                    <option value="7">7 bits (128-QAM)</option>
+                    <option value="8">8 bits (256-QAM)</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label>Noise Variance (σ²):</label>
+                <div class="slider-container">
+                    <input type="range" id="noise-var" class="slider" min="0.01" max="2" step="0.01" value="0.1">
+                    <span id="noise-var-value" class="value-display">0.10</span>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label>Received Symbol (Real):</label>
+                <div class="slider-container">
+                    <input type="range" id="real-slider" class="slider" min="-5" max="5" step="0.01" value="0">
+                    <span id="real-value" class="value-display">0.00</span>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label>Received Symbol (Imag):</label>
+                <div class="slider-container">
+                    <input type="range" id="imag-slider" class="slider" min="-5" max="5" step="0.01" value="0">
+                    <span id="imag-value" class="value-display">0.00</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <div class="info-row">
+                <span class="info-label">Current QAM:</span>
+                <span id="current-qam">16-QAM</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Received Symbol:</span>
+                <span id="received-symbol-display">0.00 + j0.00</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">LLR Values:</span>
+                <span id="llr-values-display">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Selected Symbol Index:</span>
+                <span id="selected-symbol-index">-</span>
+            </div>
+        </div>
+        
+        <div class="visualization-container">
+            <div class="constellation-likelihood-row">
+                <div class="plot-container">
+                    <div class="plot-title">Constellation & Received Symbol</div>
+                    <div class="plot-formula">Constellation points: x = (real, imag) with Gray-coded bits</div>
+                    <div id="constellation-plot" class="constellation-plot"></div>
+                </div>
+                
+                <div class="plot-container">
+                    <div class="plot-title">Symbol Likelihoods</div>
+                    <div class="plot-formula">P(y|x) ∝ exp(-|y-x|²/(2σ²))</div>
+                    <div id="likelihood-plot" class="likelihood-plot"></div>
+                </div>
+            </div>
+            
+            <div class="llr-row">
+                <div class="plot-container">
+                    <div class="plot-title">LLR Values - Exact Method</div>
+                    <div class="plot-formula">LLR(b_i) = log( Σ_{x: bits[i]=1} exp(-|y-x|²/(2σ²)) / Σ_{x: bits[i]=0} exp(-|y-x|²/(2σ²)) )</div>
+                    <div id="llr-plot" class="llr-plot"></div>
+                    <div id="llr-legend" class="legend"></div>
+                </div>
+                
+                <div class="plot-container">
+                    <div class="plot-title">LLR Values - Max-Log Method</div>
+                    <div class="plot-formula">LLR(b_i) ≈ (1/σ²) × (min|y-x|² for bit=0 - min|y-x|² for bit=1)</div>
+                    <div id="llr-maxlog-plot" class="llr-plot"></div>
+                    <div id="llr-maxlog-legend" class="legend"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        let currentQamOrder = 4;
+        let noiseVariance = 0.1;
+        let receivedSymbol = { real: 0, imag: 0 };
+        let constellation = [];
+        let llrHistory = [];
+        const maxHistoryLength = 200;
+        
+        // Plot dimensions - dynamic size based on QAM order
+        const basePlotSize = 500;
+        const margin = { top: 40, right: 40, bottom: 40, left: 50 };
+        
+        function getPlotSize(qamOrder) {
+            // Use consistent size for all QAM orders
+            return basePlotSize;
+        }
+        
+        function getPlotDimensions(qamOrder) {
+            const plotSize = getPlotSize(qamOrder);
+            return {
+                size: plotSize,
+                width: plotSize - margin.left - margin.right,
+                height: plotSize - margin.top - margin.bottom
+            };
+        }
+        
+        // Fixed dimensions for LLR and Likelihood plots (always use base size)
+        const fixedPlotWidth = basePlotSize - margin.left - margin.right;
+        const fixedPlotHeight = basePlotSize - margin.top - margin.bottom;
+        
+        // Initialize
+        initializeVisualization();
+        
+        function initializeVisualization() {
+            // Setup event listeners
+            document.getElementById('qam-order').addEventListener('change', (e) => {
+                currentQamOrder = parseInt(e.target.value);
+                updateConstellation();
+                updateVisualizations();
+            });
+            
+            document.getElementById('noise-var').addEventListener('input', (e) => {
+                noiseVariance = parseFloat(e.target.value);
+                document.getElementById('noise-var-value').textContent = noiseVariance.toFixed(2);
+                updateVisualizations();
+            });
+            
+            document.getElementById('real-slider').addEventListener('input', (e) => {
+                receivedSymbol.real = parseFloat(e.target.value);
+                document.getElementById('real-value').textContent = receivedSymbol.real.toFixed(2);
+                updateReceivedSymbol();
+            });
+            
+            document.getElementById('imag-slider').addEventListener('input', (e) => {
+                receivedSymbol.imag = parseFloat(e.target.value);
+                document.getElementById('imag-value').textContent = receivedSymbol.imag.toFixed(2);
+                updateReceivedSymbol();
+            });
+            
+            // Initialize plots
+            updateConstellation();
+            updateVisualizations();
+        }
+        
+        function generateQAMConstellation(bits) {
+            const M = Math.pow(2, bits);
+            const constellation = [];
+            
+            if (bits === 1) {
+                // BPSK
+                constellation.push({ real: -1, imag: 0, bits: [0] });
+                constellation.push({ real: 1, imag: 0, bits: [1] });
+            } else {
+                // Standard QAM: Generate constellation with Gray-coded bit labeling
+                // Standard pattern: Bit 0=I_LSB, Bit 1=Q_LSB, Bit 2=I_MSB, Bit 3=Q_MSB, etc.
+                // For non-square QAM (like 32-QAM), use a square grid that can accommodate all points
+                const side = Math.ceil(Math.sqrt(M));  // Round up to ensure we have enough grid points
+                const numBitsPerDim = Math.ceil(Math.log2(side));  // Round up for bit extraction
+                
+                // Generate constellation points in grid order
+                const step = 2 / (side - 1);
+                const start = -1;
+                
+                let symbolIndex = 0;
+                for (let j = 0; j < side; j++) {  // Q dimension (imaginary)
+                    for (let i = 0; i < side; i++) {  // I dimension (real)
+                        // For non-square QAM, skip points beyond M
+                        if (symbolIndex >= M) break;
+                        
+                        const real = start + i * step;
+                        const imag = start + j * step;
+                        
+                        // Convert grid position to Gray code
+                        // Gray code: gray = binary ^ (binary >> 1)
+                        const grayI = i ^ (i >> 1);
+                        const grayJ = j ^ (j >> 1);
+                        
+                        // Extract bits from Gray code: Even positions = I, Odd positions = Q
+                        // Bit order: [I_LSB, Q_LSB, I_MSB, Q_MSB, ...]
+                        // Extract from LSB (k=0) to MSB for proper Gray-coded pattern
+                        const bitPattern = [];
+                        for (let k = 0; k < numBitsPerDim; k++) {
+                            bitPattern.push((grayI >> k) & 1);  // I bit at even position (0, 2, 4, ...)
+                            bitPattern.push((grayJ >> k) & 1);  // Q bit at odd position (1, 3, 5, ...)
+                        }
+                        
+                        // Truncate to correct number of bits if needed
+                        const actualBits = bitPattern.slice(0, bits);
+                        
+                        constellation.push({ real, imag, bits: actualBits, row: j, col: i });
+                        symbolIndex++;
+                    }
+                    if (symbolIndex >= M) break;
+                }
+            }
+            
+            return constellation;
+        }
+        
+        function calculateLLR(received, constellation, bitIndex, noiseVar) {
+            // Exact LLR for bit b_i = log(P(b_i=1|y) / P(b_i=0|y))
+            // For AWGN: P(y|x) ∝ exp(-|y-x|²/(2σ²))
+            // LLR = log( Σ_{x: x.bits[i]=1} exp(-|y-x|²/(2σ²)) / Σ_{x: x.bits[i]=0} exp(-|y-x|²/(2σ²)) )
+            
+            const expTerms0 = [];
+            const expTerms1 = [];
+            
+            for (const point of constellation) {
+                const dist = Math.pow(received.real - point.real, 2) + 
+                            Math.pow(received.imag - point.imag, 2);
+                const exponent = -dist / (2 * noiseVar);
+                
+                if (point.bits[bitIndex] === 0) {
+                    expTerms0.push(exponent);
+                } else {
+                    expTerms1.push(exponent);
+                }
+            }
+            
+            // Use log-sum-exp trick for numerical stability
+            // log(Σ exp(a_i)) = max(a_i) + log(Σ exp(a_i - max(a_i)))
+            function logSumExp(terms) {
+                if (terms.length === 0) return -Infinity;
+                const maxTerm = Math.max(...terms);
+                const sum = terms.reduce((acc, term) => acc + Math.exp(term - maxTerm), 0);
+                return maxTerm + Math.log(sum);
+            }
+            
+            const logSum0 = logSumExp(expTerms0);
+            const logSum1 = logSumExp(expTerms1);
+            
+            // LLR = log(Σ exp(terms1)) - log(Σ exp(terms0))
+            // Positive LLR means bit is more likely to be 1
+            const llr = logSum1 - logSum0;
+            
+            // Clamp to reasonable range for visualization
+            return Math.max(-50, Math.min(50, llr));
+        }
+        
+        function calculateLLRMaxLog(received, constellation, bitIndex, noiseVar) {
+            // Max-log approximation: LLR ≈ (1/σ²) * (min|y-x|² for b_i=0 - min|y-x|² for b_i=1)
+            
+            let minDist0 = Infinity;
+            let minDist1 = Infinity;
+            
+            for (const point of constellation) {
+                const dist = Math.pow(received.real - point.real, 2) + 
+                            Math.pow(received.imag - point.imag, 2);
+                
+                if (point.bits[bitIndex] === 0) {
+                    minDist0 = Math.min(minDist0, dist);
+                } else {
+                    minDist1 = Math.min(minDist1, dist);
+                }
+            }
+            
+            // LLR = (1/σ²) * (minDist0 - minDist1)
+            // Positive LLR means bit is more likely to be 1
+            const llr = (1 / noiseVar) * (minDist0 - minDist1);
+            
+            // Clamp to reasonable range for visualization
+            return Math.max(-50, Math.min(50, llr));
+        }
+        
+        function updateConstellation() {
+            constellation = generateQAMConstellation(currentQamOrder);
+            console.log('Constellation updated:', constellation.length, 'points');
+            
+            const qamNames = {
+                1: 'BPSK/2-QAM',
+                2: 'QPSK/4-QAM',
+                3: '8-QAM',
+                4: '16-QAM',
+                5: '32-QAM',
+                6: '64-QAM',
+                7: '128-QAM',
+                8: '256-QAM'
+            };
+            
+            document.getElementById('current-qam').textContent = qamNames[currentQamOrder];
+            
+            // Update sliders range - keep at -5 to 5 for wider range
+            // The constellation plot will auto-scale to show the relevant area
+        }
+        
+        function updateReceivedSymbol() {
+            updateVisualizations();
+        }
+        
+        function updateVisualizations() {
+            console.log('Updating visualizations, constellation length:', constellation.length);
+            drawConstellation();
+            drawLikelihoodPlot();
+            drawLLRPlot();
+            drawLLRMaxLogPlot();
+            updateInfo();
+        }
+        
+        function calculateLikelihood(received, point, noiseVar) {
+            // Likelihood: P(y|x) ∝ exp(-|y-x|²/(2σ²))
+            const dist = Math.pow(received.real - point.real, 2) + 
+                        Math.pow(received.imag - point.imag, 2);
+            return Math.exp(-dist / (2 * noiseVar));
+        }
+        
+        function drawConstellation() {
+            const container = d3.select('#constellation-plot');
+            container.selectAll('*').remove();
+            
+            // Safety check: ensure constellation is initialized
+            if (!constellation || constellation.length === 0) {
+                console.error('Constellation is empty!');
+                return;
+            }
+            
+            const dims = getPlotDimensions(currentQamOrder);
+            const plotSize = dims.size;
+            const plotWidth = dims.width;
+            const plotHeight = dims.height;
+            
+            const svg = container.append('svg')
+                .attr('width', plotSize)
+                .attr('height', plotSize);
+            
+            const g = svg.append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
+            
+            // Scales - adjust based on received symbol range
+            const maxConstVal = constellation.length > 0 
+                ? Math.max(...constellation.map(p => Math.max(Math.abs(p.real), Math.abs(p.imag))))
+                : 1.0;
+            const maxReceivedVal = Math.max(Math.abs(receivedSymbol.real), Math.abs(receivedSymbol.imag));
+            const maxVal = Math.max(maxConstVal, maxReceivedVal, 1.2) + 0.5;
+            
+            const xScale = d3.scaleLinear()
+                .domain([-maxVal, maxVal])
+                .range([0, plotWidth]);
+            
+            const yScale = d3.scaleLinear()
+                .domain([-maxVal, maxVal])
+                .range([plotHeight, 0]);
+            
+            // Grid lines - adaptive spacing
+            const gridStep = maxVal <= 2 ? 0.5 : (maxVal <= 4 ? 1 : 2);
+            for (let i = -Math.ceil(maxVal); i <= Math.ceil(maxVal); i += gridStep) {
+                g.append('line')
+                    .attr('class', 'grid-line')
+                    .attr('x1', xScale(-maxVal))
+                    .attr('x2', xScale(maxVal))
+                    .attr('y1', yScale(i))
+                    .attr('y2', yScale(i));
+                
+                g.append('line')
+                    .attr('class', 'grid-line')
+                    .attr('x1', xScale(i))
+                    .attr('x2', xScale(i))
+                    .attr('y1', yScale(-maxVal))
+                    .attr('y2', yScale(maxVal));
+            }
+            
+            // X-axis with ticks
+            const xAxis = d3.axisBottom(xScale)
+                .ticks(8)
+                .tickSize(5)
+                .tickFormat(d => d.toFixed(1));
+            
+            g.append('g')
+                .attr('class', 'axis')
+                .attr('transform', `translate(0, ${plotHeight})`)
+                .call(xAxis)
+                .selectAll('text')
+                .attr('class', 'axis-tick-label')
+                .style('text-anchor', 'middle');
+            
+            // Y-axis with ticks
+            const yAxis = d3.axisLeft(yScale)
+                .ticks(8)
+                .tickSize(5)
+                .tickFormat(d => d.toFixed(1));
+            
+            g.append('g')
+                .attr('class', 'axis')
+                .call(yAxis)
+                .selectAll('text')
+                .attr('class', 'axis-tick-label');
+            
+            // Axis labels
+            g.append('text')
+                .attr('class', 'axis-label')
+                .attr('x', plotWidth / 2)
+                .attr('y', plotHeight + 35)
+                .attr('text-anchor', 'middle')
+                .text('Real (I)');
+            
+            g.append('text')
+                .attr('class', 'axis-label')
+                .attr('x', -35)
+                .attr('y', plotHeight / 2)
+                .attr('text-anchor', 'middle')
+                .attr('transform', 'rotate(-90, -35, ' + (plotHeight / 2) + ')')
+                .text('Imaginary (Q)');
+            
+            // Calculate likelihoods for all constellation points
+            const likelihoods = constellation.map((point, index) => {
+                const likelihood = calculateLikelihood(receivedSymbol, point, noiseVariance);
+                return {
+                    index: index,
+                    point: point,
+                    likelihood: likelihood
+                };
+            });
+            
+            // Normalize likelihoods for visualization
+            if (likelihoods.length === 0) {
+                console.error('No likelihoods calculated! Constellation length:', constellation.length);
+                return;
+            }
+            
+            const maxLikelihood = likelihoods.length > 0 
+                ? Math.max(...likelihoods.map(d => d.likelihood))
+                : 1.0;
+            const minLikelihood = likelihoods.length > 0
+                ? Math.min(...likelihoods.map(d => d.likelihood))
+                : 0.0;
+            const likelihoodRange = maxLikelihood - minLikelihood;
+            
+            // Base point size - use consistent size for all QAM orders
+            const basePointSize = 6;
+            const minPointSize = basePointSize * 0.5;
+            const maxPointSize = basePointSize * 2.0;
+            
+            // Calculate LLRs for each bit position (needed for displaying on constellation points)
+            const llrsPerBit = [];
+            for (let bitIndex = 0; bitIndex < currentQamOrder; bitIndex++) {
+                const llr = calculateLLR(receivedSymbol, constellation, bitIndex, noiseVariance);
+                llrsPerBit.push(llr);
+            }
+            
+            // Create data with likelihood information
+            const pointsData = constellation.map((d, index) => {
+                const likelihood = likelihoods[index].likelihood;
+                const normalizedLikelihood = likelihoodRange > 0 
+                    ? (likelihood - minLikelihood) / likelihoodRange 
+                    : 1.0;
+                const pointSize = minPointSize + normalizedLikelihood * (maxPointSize - minPointSize);
+                const opacity = 0.4 + normalizedLikelihood * 0.6; // Range from 0.4 to 1.0
+                
+                // Calculate LLR contribution from this symbol for each bit
+                // For bit i, if this symbol has bit[i]=1, it contributes to the numerator
+                // The LLR shown is the overall LLR, but we can show which bits this symbol supports
+                const symbolLLRInfo = d.bits.map((bit, bitIdx) => {
+                    return {
+                        bitIndex: bitIdx,
+                        bitValue: bit,
+                        llr: llrsPerBit[bitIdx],
+                        contributes: bit === 1 ? 'numerator' : 'denominator'
+                    };
+                });
+                
+                return {
+                    ...d,
+                    symbolIndex: index,
+                    likelihood: likelihood,
+                    normalizedLikelihood: normalizedLikelihood,
+                    pointSize: pointSize,
+                    opacity: opacity,
+                    llrInfo: symbolLLRInfo
+                };
+            });
+            
+            const points = g.selectAll('.constellation-point')
+                .data(pointsData)
+                .enter()
+                .append('g')
+                .attr('class', 'constellation-point-group');
+            
+            points.append('circle')
+                .attr('class', 'constellation-point')
+                .attr('cx', d => xScale(d.real))
+                .attr('cy', d => yScale(d.imag))
+                .attr('r', d => d.pointSize)
+                .attr('fill', '#2196F3')
+                .attr('opacity', d => d.opacity)
+                .style('cursor', 'pointer')
+                .on('click', function(event, d) {
+                    // Update selected symbol index display with LLR values
+                    const llrStr = d.llrInfo.map(info => `Bit${info.bitIndex}:${info.llr.toFixed(2)}`).join(', ');
+                    document.getElementById('selected-symbol-index').textContent = 
+                        `Index: ${d.symbolIndex}, Bits: ${d.bits.join('')}, Position: (${d.real.toFixed(3)}, ${d.imag.toFixed(3)}), Likelihood: ${d.likelihood.toFixed(4)}, LLRs: [${llrStr}]`;
+                    
+                    // Highlight the clicked point
+                    g.selectAll('.constellation-point')
+                        .attr('stroke', null)
+                        .attr('stroke-width', null);
+                    d3.select(this)
+                        .attr('stroke', '#FF5722')
+                        .attr('stroke-width', 3);
+                })
+                .append('title')
+                .text(d => {
+                    const llrStr = d.llrInfo.map(info => `Bit ${info.bitIndex}: ${info.llr.toFixed(2)}`).join(', ');
+                    return `Symbol Index: ${d.symbolIndex}\n(${d.real.toFixed(3)}, ${d.imag.toFixed(3)})\nBits: ${d.bits.join('')}\nLikelihood: ${d.likelihood.toFixed(4)}\nLLRs: ${llrStr}`;
+                });
+            
+            // Add bit labels to constellation points
+            // Hide labels for 6+ bits to prevent overlap
+            // Labels are still available in tooltips on hover
+            if (currentQamOrder < 6) {
+                points.append('text')
+                    .attr('class', 'constellation-bit-label')
+                    .attr('x', d => xScale(d.real))
+                    .attr('y', d => yScale(d.imag) - d.pointSize - 12)
+                    .attr('text-anchor', 'middle')
+                    .attr('font-size', '11px')
+                    .attr('font-weight', '600')
+                    .attr('fill', '#333')
+                    .text(d => d.bits.join(''));
+                
+                // Add LLR values below the bit labels (only for lower QAM orders to avoid clutter)
+                if (currentQamOrder <= 4) {
+                    points.append('text')
+                        .attr('class', 'constellation-llr-label')
+                        .attr('x', d => xScale(d.real))
+                        .attr('y', d => yScale(d.imag) + d.pointSize + 20)
+                        .attr('text-anchor', 'middle')
+                        .attr('font-size', '9px')
+                        .attr('fill', '#666')
+                        .text(d => {
+                            // Show LLR values for each bit, formatted compactly
+                            return d.llrInfo.map(info => `${info.llr.toFixed(1)}`).join(' ');
+                        });
+                }
+            }
+            
+            // Received symbol
+            const receivedCircle = g.append('circle')
+                .attr('class', 'received-symbol')
+                .attr('cx', xScale(receivedSymbol.real))
+                .attr('cy', yScale(receivedSymbol.imag))
+                .attr('r', 8)
+                .call(d3.drag()
+                    .on('start', function(event) {
+                        d3.select(this).raise();
+                    })
+                    .on('drag', function(event) {
+                        const newReal = xScale.invert(event.x);
+                        const newImag = yScale.invert(event.y);
+                        receivedSymbol.real = Math.max(-5, Math.min(5, newReal));
+                        receivedSymbol.imag = Math.max(-5, Math.min(5, newImag));
+                        
+                        // Update circle position
+                        d3.select(this)
+                            .attr('cx', xScale(receivedSymbol.real))
+                            .attr('cy', yScale(receivedSymbol.imag));
+                        
+                        // Update line
+                        d3.select('.received-symbol-line')
+                            .attr('x2', xScale(receivedSymbol.real))
+                            .attr('y2', yScale(receivedSymbol.imag));
+                        
+                        document.getElementById('real-slider').value = receivedSymbol.real;
+                        document.getElementById('imag-slider').value = receivedSymbol.imag;
+                        document.getElementById('real-value').textContent = receivedSymbol.real.toFixed(2);
+                        document.getElementById('imag-value').textContent = receivedSymbol.imag.toFixed(2);
+                        
+                        updateReceivedSymbol();
+                    })
+                );
+            
+            // Line from origin to received symbol
+            g.append('line')
+                .attr('class', 'received-symbol-line')
+                .attr('x1', xScale(0))
+                .attr('y1', yScale(0))
+                .attr('x2', xScale(receivedSymbol.real))
+                .attr('y2', yScale(receivedSymbol.imag));
+        }
+        
+        function drawLLRPlot() {
+            const container = d3.select('#llr-plot');
+            container.selectAll('*').remove();
+            
+            // Safety check: ensure constellation is initialized
+            if (!constellation || constellation.length === 0) {
+                console.error('Constellation is empty in drawLLRPlot!');
+                return;
+            }
+            
+            // Calculate LLRs for current position
+            const llrs = [];
+            for (let bitIndex = 0; bitIndex < currentQamOrder; bitIndex++) {
+                const llr = calculateLLR(receivedSymbol, constellation, bitIndex, noiseVariance);
+                llrs.push(llr);
+            }
+            
+            // Use fixed size for LLR plot
+            const svg = container.append('svg')
+                .attr('width', basePlotSize)
+                .attr('height', basePlotSize);
+            
+            const g = svg.append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
+            
+            // Scales for bar chart
+            const maxLLR = Math.max(50, ...llrs.map(Math.abs));
+            const yScale = d3.scaleLinear()
+                .domain([-maxLLR, maxLLR])
+                .range([fixedPlotHeight, 0]);
+            
+            const xScale = d3.scaleBand()
+                .domain(d3.range(currentQamOrder).map(d => `Bit ${d}`))
+                .range([0, fixedPlotWidth])
+                .padding(0.2);
+            
+            // Grid lines
+            for (let i = -Math.floor(maxLLR/10)*10; i <= Math.ceil(maxLLR/10)*10; i += 10) {
+                g.append('line')
+                    .attr('class', 'grid-line')
+                    .attr('x1', 0)
+                    .attr('x2', fixedPlotWidth)
+                    .attr('y1', yScale(i))
+                    .attr('y2', yScale(i));
+            }
+            
+            // X-axis with ticks
+            const xAxis = d3.axisBottom(xScale)
+                .tickSize(5);
+            
+            g.append('g')
+                .attr('class', 'axis')
+                .attr('transform', `translate(0, ${fixedPlotHeight})`)
+                .call(xAxis)
+                .selectAll('text')
+                .attr('class', 'axis-tick-label')
+                .style('text-anchor', 'middle');
+            
+            // Y-axis with ticks
+            const yAxis = d3.axisLeft(yScale)
+                .ticks(8)
+                .tickSize(5)
+                .tickFormat(d => d.toFixed(0));
+            
+            g.append('g')
+                .attr('class', 'axis')
+                .call(yAxis)
+                .selectAll('text')
+                .attr('class', 'axis-tick-label');
+            
+            // Axis labels
+            g.append('text')
+                .attr('class', 'axis-label')
+                .attr('x', fixedPlotWidth / 2)
+                .attr('y', fixedPlotHeight + 35)
+                .attr('text-anchor', 'middle')
+                .text('Bit Position');
+            
+            g.append('text')
+                .attr('class', 'axis-label')
+                .attr('x', -35)
+                .attr('y', fixedPlotHeight / 2)
+                .attr('text-anchor', 'middle')
+                .attr('transform', 'rotate(-90, -35, ' + (fixedPlotHeight / 2) + ')')
+                .text('LLR');
+            
+            // Draw bars
+            llrs.forEach((llr, bitIndex) => {
+                const barHeight = Math.abs(yScale(0) - yScale(llr));
+                const barY = llr >= 0 ? yScale(llr) : yScale(0);
+                
+                // Bar
+                g.append('rect')
+                    .attr('class', `llr-bar bit-${bitIndex}`)
+                    .attr('x', xScale(`Bit ${bitIndex}`))
+                    .attr('y', barY)
+                    .attr('width', xScale.bandwidth())
+                    .attr('height', barHeight)
+                    .append('title')
+                    .text(`Bit ${bitIndex}: ${llr.toFixed(2)}`);
+                
+                // Value label
+                g.append('text')
+                    .attr('class', 'llr-bar-label')
+                    .attr('x', xScale(`Bit ${bitIndex}`) + xScale.bandwidth() / 2)
+                    .attr('y', barY - 5)
+                    .text(llr.toFixed(1));
+            });
+            
+            // Update legend
+            updateLegend();
+        }
+        
+        function drawLLRMaxLogPlot() {
+            const container = d3.select('#llr-maxlog-plot');
+            container.selectAll('*').remove();
+            
+            // Safety check: ensure constellation is initialized
+            if (!constellation || constellation.length === 0) {
+                console.error('Constellation is empty in drawLLRMaxLogPlot!');
+                return;
+            }
+            
+            // Calculate LLRs using max-log method
+            const llrs = [];
+            for (let bitIndex = 0; bitIndex < currentQamOrder; bitIndex++) {
+                const llr = calculateLLRMaxLog(receivedSymbol, constellation, bitIndex, noiseVariance);
+                llrs.push(llr);
+            }
+            
+            // Use fixed size for LLR plot
+            const svg = container.append('svg')
+                .attr('width', basePlotSize)
+                .attr('height', basePlotSize);
+            
+            const g = svg.append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
+            
+            // Scales for bar chart
+            const maxLLR = Math.max(50, ...llrs.map(Math.abs));
+            const yScale = d3.scaleLinear()
+                .domain([-maxLLR, maxLLR])
+                .range([fixedPlotHeight, 0]);
+            
+            const xScale = d3.scaleBand()
+                .domain(d3.range(currentQamOrder).map(d => `Bit ${d}`))
+                .range([0, fixedPlotWidth])
+                .padding(0.2);
+            
+            // Grid lines
+            for (let i = -Math.floor(maxLLR/10)*10; i <= Math.ceil(maxLLR/10)*10; i += 10) {
+                g.append('line')
+                    .attr('class', 'grid-line')
+                    .attr('x1', 0)
+                    .attr('x2', fixedPlotWidth)
+                    .attr('y1', yScale(i))
+                    .attr('y2', yScale(i));
+            }
+            
+            // X-axis with ticks
+            const xAxis = d3.axisBottom(xScale)
+                .tickSize(5);
+            
+            g.append('g')
+                .attr('class', 'axis')
+                .attr('transform', `translate(0, ${fixedPlotHeight})`)
+                .call(xAxis)
+                .selectAll('text')
+                .attr('class', 'axis-tick-label')
+                .style('text-anchor', 'middle');
+            
+            // Y-axis with ticks
+            const yAxis = d3.axisLeft(yScale)
+                .ticks(8)
+                .tickSize(5)
+                .tickFormat(d => d.toFixed(0));
+            
+            g.append('g')
+                .attr('class', 'axis')
+                .call(yAxis)
+                .selectAll('text')
+                .attr('class', 'axis-tick-label');
+            
+            // Axis labels
+            g.append('text')
+                .attr('class', 'axis-label')
+                .attr('x', fixedPlotWidth / 2)
+                .attr('y', fixedPlotHeight + 35)
+                .attr('text-anchor', 'middle')
+                .text('Bit Position');
+            
+            g.append('text')
+                .attr('class', 'axis-label')
+                .attr('x', -35)
+                .attr('y', fixedPlotHeight / 2)
+                .attr('text-anchor', 'middle')
+                .attr('transform', 'rotate(-90, -35, ' + (fixedPlotHeight / 2) + ')')
+                .text('LLR');
+            
+            // Draw bars
+            llrs.forEach((llr, bitIndex) => {
+                const barHeight = Math.abs(yScale(0) - yScale(llr));
+                const barY = llr >= 0 ? yScale(llr) : yScale(0);
+                
+                // Bar
+                g.append('rect')
+                    .attr('class', `llr-bar bit-${bitIndex}`)
+                    .attr('x', xScale(`Bit ${bitIndex}`))
+                    .attr('y', barY)
+                    .attr('width', xScale.bandwidth())
+                    .attr('height', barHeight)
+                    .append('title')
+                    .text(`Bit ${bitIndex}: ${llr.toFixed(2)} (Max-Log)`);
+                
+                // Value label
+                g.append('text')
+                    .attr('class', 'llr-bar-label')
+                    .attr('x', xScale(`Bit ${bitIndex}`) + xScale.bandwidth() / 2)
+                    .attr('y', barY - 5)
+                    .text(llr.toFixed(1));
+            });
+            
+            // Update legend
+            updateMaxLogLegend();
+        }
+        
+        function drawLikelihoodPlot() {
+            const container = d3.select('#likelihood-plot');
+            container.selectAll('*').remove();
+            
+            // Safety check: ensure constellation is initialized
+            if (!constellation || constellation.length === 0) {
+                console.error('Constellation is empty in drawLikelihoodPlot!');
+                return;
+            }
+            
+            // Calculate likelihoods for all constellation points
+            const likelihoods = constellation.map((point, index) => {
+                const likelihood = calculateLikelihood(receivedSymbol, point, noiseVariance);
+                return {
+                    index: index,
+                    point: point,
+                    likelihood: likelihood,
+                    label: `(${point.real.toFixed(2)}, ${point.imag.toFixed(2)})`
+                };
+            });
+            
+            // Normalize likelihoods (they should sum to 1 for proper probabilities)
+            const sum = likelihoods.reduce((acc, item) => acc + item.likelihood, 0);
+            likelihoods.forEach(item => {
+                item.normalizedLikelihood = item.likelihood / sum;
+            });
+            
+            // Sort by symbol index (ascending)
+            likelihoods.sort((a, b) => a.index - b.index);
+            
+            // Use fixed size for Likelihood plot
+            const svg = container.append('svg')
+                .attr('width', basePlotSize)
+                .attr('height', basePlotSize);
+            
+            const g = svg.append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
+            
+            // Scales - use fixed domain [0, 1] for Y-axis
+            const yScale = d3.scaleLinear()
+                .domain([0, 1])
+                .range([fixedPlotHeight, 0]);
+            
+            const xScale = d3.scaleBand()
+                .domain(likelihoods.map((d, i) => i))
+                .range([0, fixedPlotWidth])
+                .padding(0.1);
+            
+            // Grid lines - use fixed domain [0, 1]
+            for (let i = 0; i <= 10; i++) {
+                const val = i / 10; // 0.0, 0.1, 0.2, ..., 1.0
+                g.append('line')
+                    .attr('class', 'grid-line')
+                    .attr('x1', 0)
+                    .attr('x2', fixedPlotWidth)
+                    .attr('y1', yScale(val))
+                    .attr('y2', yScale(val));
+            }
+            
+            // X-axis with ticks (show every Nth symbol to avoid crowding)
+            const tickStep = Math.max(1, Math.floor(likelihoods.length / 10));
+            const xAxisTicks = likelihoods.map((d, i) => i).filter((d, i) => i % tickStep === 0 || i === likelihoods.length - 1);
+            const xAxis = d3.axisBottom(xScale)
+                .tickValues(xAxisTicks)
+                .tickSize(5)
+                .tickFormat((d, i) => d);
+            
+            g.append('g')
+                .attr('class', 'axis')
+                .attr('transform', `translate(0, ${fixedPlotHeight})`)
+                .call(xAxis)
+                .selectAll('text')
+                .attr('class', 'axis-tick-label')
+                .style('text-anchor', 'middle')
+                .style('font-size', '9px');
+            
+            // Y-axis with ticks
+            const yAxis = d3.axisLeft(yScale)
+                .ticks(8)
+                .tickSize(5)
+                .tickFormat(d => d.toFixed(3));
+            
+            g.append('g')
+                .attr('class', 'axis')
+                .call(yAxis)
+                .selectAll('text')
+                .attr('class', 'axis-tick-label');
+            
+            // Axis labels
+            g.append('text')
+                .attr('class', 'axis-label')
+                .attr('x', fixedPlotWidth / 2)
+                .attr('y', fixedPlotHeight + 35)
+                .attr('text-anchor', 'middle')
+                .text('Symbol Index');
+            
+            g.append('text')
+                .attr('class', 'axis-label')
+                .attr('x', -35)
+                .attr('y', fixedPlotHeight / 2)
+                .attr('text-anchor', 'middle')
+                .attr('transform', 'rotate(-90, -35, ' + (fixedPlotHeight / 2) + ')')
+                .text('Likelihood');
+            
+            // Draw bars
+            likelihoods.forEach((item, i) => {
+                const barHeight = fixedPlotHeight - yScale(item.normalizedLikelihood);
+                
+                // Bar
+                g.append('rect')
+                    .attr('class', 'likelihood-bar')
+                    .attr('x', xScale(i))
+                    .attr('y', yScale(item.normalizedLikelihood))
+                    .attr('width', xScale.bandwidth())
+                    .attr('height', barHeight)
+                    .append('title')
+                    .text(`${item.label}\nBits: ${item.point.bits.join('')}\nLikelihood: ${item.normalizedLikelihood.toFixed(4)}`);
+                
+                // Value label (only show if bar is tall enough)
+                if (barHeight > 15) {
+                    g.append('text')
+                        .attr('class', 'likelihood-bar-label')
+                        .attr('x', xScale(i) + xScale.bandwidth() / 2)
+                        .attr('y', yScale(item.normalizedLikelihood) - 3)
+                        .text(item.normalizedLikelihood.toFixed(3));
+                }
+            });
+        }
+        
+        function updateMaxLogLegend() {
+            const legend = d3.select('#llr-maxlog-legend');
+            legend.selectAll('*').remove();
+            
+            for (let bitIndex = 0; bitIndex < currentQamOrder; bitIndex++) {
+                const color = d3.select(`.bit-${bitIndex}`).style('stroke');
+                const item = legend.append('div')
+                    .attr('class', 'legend-item');
+                
+                item.append('div')
+                    .attr('class', 'legend-color')
+                    .style('background-color', color);
+                
+                item.append('span')
+                    .text(`Bit ${bitIndex}`);
+            }
+        }
+        
+        function updateLegend() {
+            const legend = d3.select('#llr-legend');
+            legend.selectAll('*').remove();
+            
+            for (let bitIndex = 0; bitIndex < currentQamOrder; bitIndex++) {
+                const color = d3.select(`.bit-${bitIndex}`).style('stroke');
+                const item = legend.append('div')
+                    .attr('class', 'legend-item');
+                
+                item.append('div')
+                    .attr('class', 'legend-color')
+                    .style('background-color', color);
+                
+                item.append('span')
+                    .text(`Bit ${bitIndex}`);
+            }
+        }
+        
+        function updateInfo() {
+            const llrs = [];
+            for (let bitIndex = 0; bitIndex < currentQamOrder; bitIndex++) {
+                const llr = calculateLLR(receivedSymbol, constellation, bitIndex, noiseVariance);
+                llrs.push(llr.toFixed(2));
+            }
+            
+            document.getElementById('received-symbol-display').textContent = 
+                `${receivedSymbol.real.toFixed(2)} + j${receivedSymbol.imag.toFixed(2)}`;
+            
+            document.getElementById('llr-values-display').textContent = 
+                `[${llrs.join(', ')}]`;
+        }
+    </script>
+</body>
+</html>
