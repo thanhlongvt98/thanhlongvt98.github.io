@@ -22,6 +22,9 @@ main:
     
   # - title: "Portfolio"
   #   url: /portfolio/
+
+  - title: "Certificates"
+    url: /certificates/
     
   - title: "CV"
     url: /cv/

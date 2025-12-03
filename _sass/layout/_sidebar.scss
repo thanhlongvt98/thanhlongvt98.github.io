@@ -198,6 +198,7 @@
   z-index: -1;
   box-shadow: 0 0 10px rgba(#000, 0.25);
   cursor: default;
+  overflow: visible;
 
   @include breakpoint($large) {
     display: block;
@@ -207,6 +208,7 @@
     border: 0;
     background: transparent;
     box-shadow: none;
+    overflow: visible;
   }
 
   &:before {
@@ -247,9 +249,13 @@
     white-space: nowrap;
     
     &.author__desktop {
+      display: block;
       white-space: normal;
       word-wrap: break-word;
       overflow-wrap: break-word;
+      max-width: 100%;
+      overflow: visible;
+      line-height: 1.5;
     }
   }
 
