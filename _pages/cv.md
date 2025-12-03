@@ -132,6 +132,7 @@ redirect_from:
 
 <div class="cv-item">
   <ul class="cv-item-details" style="list-style-type: disc; padding-left: 2em;">
+    <li>SUTD Fellowship Scholarship, Singapore University of Technology and Design, September 2025</li>
     <li>Best Demo Paper Award at The 2nd Workshop on Next-generation Open and Programmable Radio Access Networks (NG-OPERA), INFOCOM WKSHPS, 2024</li>
     <li>Consolation prize in National Excellent Student Contest in Maths, Vietnam, 2015</li>
   </ul>
