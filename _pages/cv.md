@@ -70,7 +70,7 @@ redirect_from:
 <div class="cv-item">
   <div class="cv-item-title">PhD Student</div>
   <div class="cv-item-meta"><a href="https://www.sutd.edu.sg/" target="_blank">Singapore University of Technology and Design (SUTD)</a> | August 2025 - Present | Singapore</div>
-  <div class="cv-item-meta"><em>Supervised by <a href="https://www.sutd.edu.sg/profile/chen-binbin/" target="_blank">Prof. Binbin Chen</a> (<a href="https://scholar.google.com/citations?hl=en&user=42U2zXcAAAAJ&view_op=list_works&sortby=pubdate" target="_blank">Google Scholar</a>)</em></div>
+  <div class="cv-item-meta"><em>Supervised by <a href="https://www.sutd.edu.sg/profile/chen-binbin/" target="_blank">Prof. Binbin Chen</a> (<a href="https://scholar.google.com/citations?hl=en&user=42U2zXcAAAAJ&view_op=list_works&sortby=pubdate" target="_blank">Google Scholar</a>, <a href="https://www.linkedin.com/in/binbin-chen-43194624/" target="_blank">LinkedIn</a>)</em></div>
 </div>
 
 <div class="cv-item">
@@ -133,7 +133,7 @@ redirect_from:
 <div class="cv-item">
   <ul class="cv-item-details" style="list-style-type: disc; padding-left: 2em;">
     <li>SUTD Fellowship Scholarship, Singapore University of Technology and Design, September 2025</li>
-    <li>Best Demo Paper Award at The 2nd Workshop on Next-generation Open and Programmable Radio Access Networks (NG-OPERA), INFOCOM WKSHPS, 2024</li>
+    <!-- <li>Best Demo Paper Award at The 2nd Workshop on Next-generation Open and Programmable Radio Access Networks (NG-OPERA), INFOCOM WKSHPS, 2024</li> -->
     <li>Consolation prize in National Excellent Student Contest in Maths, Vietnam, 2015</li>
   </ul>
 </div>
