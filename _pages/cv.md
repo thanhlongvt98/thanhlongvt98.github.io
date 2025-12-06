@@ -76,7 +76,7 @@ redirect_from:
 <div class="cv-item">
   <div class="cv-item-title">Communications Testbed Engineer</div>
   <div class="cv-item-meta"><a href="https://fcp.sutd.edu.sg/" target="_blank">Future Comms R&D Programme</a> - <a href="https://fcp.sutd.edu.sg/fcclab/" target="_blank">FCCLab</a> - APOS | August 2022 - August 2025 | Singapore</div>
-  <div class="cv-item-meta"><em>5G Networks and Open RAN System Research</em></div>
+  <div class="cv-item-meta"><em>Supervised by <a href="https://www.sutd.edu.sg/profile/chen-binbin/" target="_blank">Prof. Binbin Chen</a> and <a href="https://sites.google.com/site/maovngo/home?authuser=0" target="_blank">Dr. Mao V. Ngo</a> | 5G Networks and Open RAN System Research</em></div>
   <ul class="cv-item-details">
     <li>Research and development of RAN Intelligent Controller (RIC) systems and Open RAN platforms</li>
     <li>Published research papers on RIC implementation and AI-driven rApps for 5G networks</li>
