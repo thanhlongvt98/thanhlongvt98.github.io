@@ -161,6 +161,11 @@ analytics:
   google:
     tracking_id          :
 
+# Visitor Counter
+visitor_counter:
+  enabled                : false # Set to true to enable visitor counter in footer
+  code                   : # Paste your ClustrMaps or Flag Counter embed code here (HTML)
+
 
 # Reading Files
 include:
