@@ -120,9 +120,10 @@
     }
     
     img {
-      width: auto;
-      max-width: 900px;
-      height: 53px;
+      width: 100%;
+      max-width: 1000px;
+      height: auto;
+      min-height: 50px;
       display: block;
       margin: 0 auto;
       object-fit: contain;
