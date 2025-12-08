@@ -4,7 +4,7 @@
 
 .page__footer {
   @include clearfix;
-  background-color: var(--global-footer-bg-color);
+  background-color: #4CAF50;
   color: var(--global-text-color-light);
 
   float: left;
@@ -60,8 +60,11 @@
 .page__footer-copyright {
   font-family: $global-font-family;
   font-size: $type-size-7;
+  margin-top: 0.5em;
   margin-bottom: 0.5em;
   line-height: 1.4;
+  text-align: center;
+  color: var(--global-text-color-light);
 }
 
 .page__footer-follow {
@@ -98,9 +101,8 @@
 }
 
 .page__footer-visitors {
-  margin-top: 1em;
+  margin-top: 0.5em;
   padding-top: 0.5em;
-  border-top: 1px solid var(--global-border-color);
   text-align: center;
   width: 100%;
   
@@ -110,7 +112,7 @@
     max-width: 800px;
     margin: 0 auto;
     padding: 0.3em;
-    background-color: var(--global-footer-bg-color);
+    background-color: transparent;
     border-radius: 4px;
     
     .visitor-counter-title {
