@@ -4,7 +4,7 @@
 
 .page__footer {
   @include clearfix;
-  background-color: var(--global-footer-bg-color);
+  background-color: var(--global-bg-color);
   color: var(--global-text-color-light);
 
   width: 100%;
@@ -23,7 +23,7 @@
     margin-right: auto;
     margin-top: 0;
     max-width: 100%;
-    padding: 0.5em 1em;
+    padding: 0.3em 1em;
 
     @include breakpoint($x-large) {
       max-width: $x-large;
@@ -50,8 +50,8 @@
 .page__footer-copyright {
   font-family: $global-font-family;
   font-size: $type-size-7;
-  margin-top: 0.2em;
-  margin-bottom: 0.1em;
+  margin-top: 0.1em;
+  margin-bottom: 0.2em;
   line-height: 1.1;
   text-align: center;
   color: var(--global-text-color-light);
@@ -93,7 +93,7 @@
 
 .page__footer-visitors {
   margin-top: 0;
-  padding-top: 0.5em;
+  padding-top: 0.2em;
   text-align: center;
   width: 100%;
   
@@ -116,11 +116,12 @@
     }
     
     img {
-      width: 100%;
-      max-width: 800px;
-      height: auto;
+      width: auto;
+      max-width: 600px;
+      height: 35px;
       display: block;
       margin: 0 auto;
+      object-fit: contain;
     }
     
     a {
