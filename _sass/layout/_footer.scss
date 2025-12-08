@@ -121,12 +121,14 @@
     
     img {
       width: 100%;
-      max-width: 1000px;
+      max-width: 1200px;
       height: auto;
-      min-height: 50px;
+      min-height: 70px;
       display: block;
       margin: 0 auto;
       object-fit: contain;
+      transform: scale(1.2);
+      transform-origin: center;
     }
     
     a {
