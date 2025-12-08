@@ -4,7 +4,7 @@
 
 .page__footer {
   @include clearfix;
-  background-color: var(--global-bg-color);
+  background-color: #007ACC;
   color: var(--global-text-color-light);
 
   width: 100%;
@@ -117,8 +117,8 @@
     
     img {
       width: auto;
-      max-width: 600px;
-      height: 35px;
+      max-width: 900px;
+      height: 53px;
       display: block;
       margin: 0 auto;
       object-fit: contain;
