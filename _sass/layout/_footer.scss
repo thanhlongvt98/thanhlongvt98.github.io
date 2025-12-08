@@ -4,7 +4,7 @@
 
 .page__footer {
   @include clearfix;
-  background-color: #4CAF50;
+  background-color: var(--global-footer-bg-color);
   color: var(--global-text-color-light);
 
   float: left;
@@ -31,9 +31,9 @@
     @include clearfix;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 0.3em;
+    margin-top: 0.1em;
     max-width: 100%;
-    padding: 0 1em 0.3em;
+    padding: 0 1em 0.2em;
 
     @include breakpoint($x-large) {
       max-width: $x-large;
@@ -60,11 +60,12 @@
 .page__footer-copyright {
   font-family: $global-font-family;
   font-size: $type-size-7;
-  margin-top: 0.3em;
-  margin-bottom: 0.3em;
-  line-height: 1.2;
+  margin-top: 0.2em;
+  margin-bottom: 0.1em;
+  line-height: 1.1;
   text-align: center;
   color: var(--global-text-color-light);
+  padding: 0;
 }
 
 .page__footer-follow {
@@ -101,8 +102,8 @@
 }
 
 .page__footer-visitors {
-  margin-top: 0.3em;
-  padding-top: 0.3em;
+  margin-top: 0.1em;
+  padding-top: 0.1em;
   text-align: center;
   width: 100%;
   
@@ -111,14 +112,14 @@
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
-    padding: 0.2em;
+    padding: 0.1em;
     background-color: transparent;
     border-radius: 4px;
     
     .visitor-counter-title {
       font-size: $type-size-7;
       font-weight: 600;
-      margin-bottom: 0.3em;
+      margin-bottom: 0.2em;
       color: var(--global-text-color-light);
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -130,6 +131,7 @@
       height: auto;
       display: block;
       margin: 0 auto;
+      max-height: 60px;
     }
     
     a {
