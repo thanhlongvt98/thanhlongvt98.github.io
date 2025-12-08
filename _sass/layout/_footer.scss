@@ -100,9 +100,13 @@
   padding-top: 1em;
   border-top: 1px solid var(--global-border-color);
   text-align: center;
+  width: 100%;
   
   .visitor-counter-container {
-    display: inline-block;
+    display: block;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
     padding: 0.5em;
     background-color: var(--global-footer-bg-color);
     border-radius: 4px;
@@ -117,7 +121,8 @@
     }
     
     img {
-      max-width: 100%;
+      width: 100%;
+      max-width: 800px;
       height: auto;
       display: block;
       margin: 0 auto;
@@ -126,6 +131,7 @@
     a {
       display: inline-block;
       text-decoration: none;
+      width: 100%;
       
       &:hover {
         opacity: 0.8;
