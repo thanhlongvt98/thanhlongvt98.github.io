@@ -7,18 +7,8 @@
   background-color: var(--global-footer-bg-color);
   color: var(--global-text-color-light);
 
-  float: left;
-  margin-left: 0;
-  margin-right: 0;
   width: 100%;
   clear: both;
-
-  /* sticky footer fix start */
-  position: absolute;
-  bottom: 0em;
-  height: auto;
-  /* sticky footer fix end */
-
   margin-top: 2em;
 
   -webkit-animation: intro 0.3s both;
@@ -31,9 +21,9 @@
     @include clearfix;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 0.1em;
+    margin-top: 0;
     max-width: 100%;
-    padding: 0 1em 0.2em;
+    padding: 0.5em 1em;
 
     @include breakpoint($x-large) {
       max-width: $x-large;
@@ -102,8 +92,8 @@
 }
 
 .page__footer-visitors {
-  margin-top: 0.1em;
-  padding-top: 0.1em;
+  margin-top: 0;
+  padding-top: 0.5em;
   text-align: center;
   width: 100%;
   
@@ -112,7 +102,7 @@
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
-    padding: 0.1em;
+    padding: 0;
     background-color: transparent;
     border-radius: 4px;
     
@@ -131,11 +121,10 @@
       height: auto;
       display: block;
       margin: 0 auto;
-      max-height: 60px;
     }
     
     a {
-      display: inline-block;
+      display: block;
       text-decoration: none;
       width: 100%;
       
