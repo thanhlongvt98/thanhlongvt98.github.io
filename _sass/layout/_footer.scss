@@ -31,9 +31,9 @@
     @include clearfix;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 0.5em;
+    margin-top: 0.3em;
     max-width: 100%;
-    padding: 0 1em 0.5em;
+    padding: 0 1em 0.3em;
 
     @include breakpoint($x-large) {
       max-width: $x-large;
@@ -60,9 +60,9 @@
 .page__footer-copyright {
   font-family: $global-font-family;
   font-size: $type-size-7;
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-  line-height: 1.4;
+  margin-top: 0.3em;
+  margin-bottom: 0.3em;
+  line-height: 1.2;
   text-align: center;
   color: var(--global-text-color-light);
 }
@@ -101,8 +101,8 @@
 }
 
 .page__footer-visitors {
-  margin-top: 0.5em;
-  padding-top: 0.5em;
+  margin-top: 0.3em;
+  padding-top: 0.3em;
   text-align: center;
   width: 100%;
   
@@ -111,14 +111,14 @@
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
-    padding: 0.3em;
+    padding: 0.2em;
     background-color: transparent;
     border-radius: 4px;
     
     .visitor-counter-title {
       font-size: $type-size-7;
       font-weight: 600;
-      margin-bottom: 0.5em;
+      margin-bottom: 0.3em;
       color: var(--global-text-color-light);
       text-transform: uppercase;
       letter-spacing: 0.5px;
