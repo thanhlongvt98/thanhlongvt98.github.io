@@ -120,15 +120,12 @@
     }
     
     img {
-      width: 100%;
-      max-width: 1200px;
-      height: auto;
-      min-height: 70px;
+      width: auto;
+      max-width: 900px;
+      height: 65px;
       display: block;
       margin: 0 auto;
       object-fit: contain;
-      transform: scale(1.2);
-      transform-origin: center;
     }
     
     a {
